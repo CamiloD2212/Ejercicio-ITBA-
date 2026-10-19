@@ -910,3 +910,193 @@ El proyecto se considera terminado cuando:
 - [ ] No existen credenciales reales en el repositorio.
 - [ ] El proyecto puede ejecutarse desde una instalación limpia.
 - [ ] Cualquier ambigüedad de la especificación fue identificada y resuelta explícitamente.
+
+---
+
+# PARTE II: FRONTEND — BUENAS PRÁCTICAS Y SDD
+
+---
+
+# 28. Contexto Global de Frontend (Frontend Rules)
+
+El desarrollo del frontend mediante Desarrollo Basado en Especificaciones (SDD) traslada el contrato de API del backend a un contrato de UI/UX, componentes y manejo de estado.
+El agente de IA debe adherirse estrictamente a estas reglas para evitar componentes monolíticos con lógica visual y llamadas de red entremezcladas.
+
+## Stack Fijo Frontend
+- **Framework / Core**: React 18+
+- **Tooling & Build**: Vite
+- **Enrutamiento**: React Router DOM v6+
+- **Cliente HTTP / Estado**: Axios + React Context API (o custom hooks especializados)
+- **Estilos**: Vanilla CSS moderno con Custom Properties (CSS Variables) estructurado como sistema de diseño de tokens
+- **Iconos**: Lucide React o SVG nativos optimizados
+
+## Patrón de Componentes
+Separación estricta entre:
+1. **Componentes Presentacionales (Dumb Components)**:
+   - Reciben datos y funciones únicamente mediante `props`.
+   - Renderizan interfaz pura.
+   - **NO** contienen `useEffect` para llamadas a la API ni importan directamente servicios de red.
+   - Ejemplos: `TicketCard`, `ColumnCard`, `BoardCard`, `Button`, `Modal`, `Input`, `Toast`.
+2. **Contenedores / Páginas (Smart Components / Pages)**:
+   - Manejan lógica de negocio, ciclo de vida (`useEffect`), estado y llamadas a la API a través de la capa de servicio.
+   - Distribuyen los datos hacia los componentes presentacionales.
+   - Ejemplos: `LoginPage`, `BoardsListPage`, `BoardDetailPage`.
+
+## Estructura de Directorios del Frontend (`client/src/`)
+```text
+client/src/
+├── api/          # Funciones aisladas de llamada a los endpoints REST (Axios)
+│   ├── apiClient.js
+│   ├── boardService.js
+│   ├── columnService.js
+│   └── ticketService.js
+├── components/   # Componentes reutilizables atómicos y de UI común
+│   ├── ui/       # Button, Input, Modal, Toast, Spinner, ThemeToggle
+│   └── layout/   # Navbar, Layout
+├── features/     # Módulos por dominio funcional
+│   ├── boards/   # BoardCard, CreateBoardModal
+│   ├── columns/  # ColumnCard, CreateColumnModal
+│   └── tickets/  # TicketCard, CreateTicketModal, EditTicketModal
+├── hooks/        # Custom hooks reutilizables (useTheme, useAuth, useToast)
+├── pages/        # Vistas asociadas a rutas de React Router
+│   ├── LoginPage.jsx
+│   ├── BoardsListPage.jsx
+│   └── BoardDetailPage.jsx
+├── routes/       # Configuración de React Router DOM y rutas protegidas
+│   └── AppRouter.jsx
+├── data/         # Datos sintéticos para mocking y testing desacoplado
+│   └── mockData.js
+├── styles/       # Tokens globales, variables y temas
+│   ├── tokens.css
+│   └── index.css
+├── App.jsx
+└── main.jsx
+```
+
+---
+
+# 29. Especificación de Contratos de UI y Rutas (SPA Architecture)
+
+## Matriz de Rutas
+
+| Ruta | Componente | Acceso | Descripción / Requerimiento |
+|---|---|---|---|
+| `/login` | `LoginPage` | Público | Formulario de autenticación con credenciales simuladas/sesión de usuario |
+| `/boards` | `BoardsListPage` | Protegido | Lista de tableros del usuario con opción de creación y navegación |
+| `/boards/:boardId` | `BoardDetailPage` | Protegido | Vista principal Kanban. Carga columnas y tickets de forma anidada |
+| `*` | `NotFoundPage` | Público | Redirección amigable a `/boards` o vista 404 |
+
+## Límites Negativos (React Router)
+- **NO utilices componentes `<Link>` para acciones de mutación** (crear, borrar o mover tickets/columnas/tableros).
+- Utiliza **navegación programática (`useNavigate`)** únicamente después de que la mutación en la API haya sido completada con éxito.
+- Las mutaciones deben procesarse mediante llamadas asíncronas con feedback visual antes de cualquier cambio de ruta.
+
+---
+
+# 30. Formularios y Mantenimiento de Estado (Forms & Validations)
+
+## Validación en Cliente vs. Servidor
+1. **Validación de entradas en cliente**:
+   - Validar obligatoriedad y formato antes de despachar la petición (título no vacío, cadenas válidas).
+2. **Especificación de UI**:
+   - Los errores devueltos por el backend (ej. `400 Bad Request` por título duplicado, payload inválido o ID incorrecto) deben mapearse directamente a alertas visuales destacadas en los inputs correspondientes del formulario sin recargar la página.
+
+## Manejo de Estados de Carga (UX Feedback)
+- **Regla estricta**: Todo formulario o botón que ejecute una mutación (`POST`, `PATCH` o `DELETE`) debe deshabilitar el botón de envío (`disabled={isSubmitting}`) y mostrar un indicador visual (`spinner` o texto de carga) mientras la petición HTTP esté en curso.
+- Deshabilitar interacción concurrente que pueda generar dobles peticiones.
+
+---
+
+# 31. Partición Generativa en el Frontend (Fases SDD)
+
+El desarrollo del frontend debe realizarse de manera secuencial y modular:
+
+### Fase 1: Capa de Servicio API (`src/api`)
+- Implementar los métodos de integración con los endpoints REST del backend (`boardService.js`, `columnService.js`, `ticketService.js`).
+- Utilizar una instancia centralizada de Axios (`apiClient.js`) configurada con baseURL e interceptores de error.
+
+### Fase 2: Componentes Atómicos y Presentacionales de UI
+- Construir componentes tontos sin conexión a API: `TicketCard`, `ColumnCard`, `Modal`, `Button`, `Input`, `Badge`, `Toast`.
+- Validar su aspecto visual y callbacks mediante props controladas.
+
+### Fase 3: Integración de Vistas y Rutas
+- Ensamblar las páginas conectando los servicios con los componentes mediante React Router DOM:
+  - `LoginPage.jsx`
+  - `BoardsListPage.jsx`
+  - `BoardDetailPage.jsx`
+- Implementar estados de `loading`, `error` y `data` en cada vista.
+
+---
+
+# 32. Control de Concurrencia Visual y Sincronización (Optimistic UI)
+
+En la interfaz Kanban, mover tickets entre columnas es la interacción central (`PATCH /api/boards/:boardId/columns/:columnId/tickets/:ticketId`).
+
+## Regla de Sincronización Optimista
+1. Al arrastrar o mover un ticket a otra columna, aplicar **actualización optimista inmediata en el estado local** para garantizar una respuesta visual instantánea (60 fps).
+2. Enviar la petición PATCH al backend con `columnId` o `targetColumnId`.
+3. Si el backend responde satisfactoriamente (`200 OK`), confirmar el estado local.
+4. Si el backend responde con un error (`400` o `404`) o fallo de red:
+   - **Revertir inmediatamente** el ticket a su columna original.
+   - Desplegar una alerta emergente (**Toast**) notificando el fallo exacto devuelto por la API.
+
+---
+
+# 33. Workflow de Desarrollo (Vite & Mocking)
+
+- **Mock Data**: Debe existir un módulo `src/data/mockData.js` con datos sintéticos completos basados en la especificación del backend, de modo que el frontend pueda inicializarse, probarse o ejecutarse en modo demo sin dependencia dura de MongoDB.
+- **Variables de Entorno con Vite**:
+  - El endpoint base de la API debe consumirse exclusivamente desde `import.meta.env.VITE_API_URL` (con fallback a `/api` o `http://localhost:4000/api`).
+  - Configurar `.env.example` en el cliente con `VITE_API_URL=http://localhost:4000/api`.
+
+---
+
+# 34. Estilo Visual: "Modern SaaS" (Vibrante y Accesible)
+
+El frontend debe aplicar de forma exhaustiva el estilo **Modern SaaS**:
+- Enfoque en herramientas de productividad modernas (estilo Linear / Notion / Asana).
+- Colores primarios llamativos para los Call to Action (CTA).
+- Bordes redondeados suaves (`border-radius: 8px` / `12px` / `16px`).
+- Jerarquía tipográfica nítida y accesible.
+
+## Paleta de Colores
+
+### Light Mode
+- **Fondo principal**: `#FAFAFA`
+- **Tarjetas / Contenedores**: `#FFFFFF` con sombras suaves y difuminadas (`box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03)`)
+- **Texto principal**: `#2D3748`
+- **Texto secundario / Muted**: `#718096`
+- **Acentos primarios**: `#00B8D9` (Cian vibrante) y `#6554C0` (Púrpura moderno)
+- **Bordes**: `#E2E8F0`
+
+### Dark Mode
+- **Fondo principal**: `#121212`
+- **Tarjetas / Contenedores**: `#1E1E1E` delimitadas por bordes sutiles `#333333` (sin sombras pesadas)
+- **Texto principal**: `#E0E0E0`
+- **Texto secundario / Muted**: `#A0AEC0`
+- **Acentos primarios**: `#33E1ED` (Cian neón) y `#9F8DF1` (Púrpura claro)
+- **Bordes**: `#333333`
+
+## Lineamientos de Implementación del Theme Switch (Light/Dark)
+1. **Variables CSS (Custom Properties)**:
+   - Queda estrictamente prohibido "hardcodear" colores hexadecimales en los componentes.
+   - Definir tokens CSS globales (`--bg-primary`, `--bg-card`, `--text-primary`, `--text-secondary`, `--accent-cyan`, `--accent-purple`, `--border-color`, `--card-shadow`, etc.).
+2. **Detección de Preferencia del Sistema**:
+   - Al cargar por primera vez, evaluar `@media (prefers-color-scheme: dark)` para adoptar el tema nativo del sistema operativo del usuario de forma automática.
+3. **Gestión y Persistencia**:
+   - El interruptor de tema en la interfaz debe conmutar la clase global `.dark` en el elemento `<html>` o `<body>`.
+   - La preferencia debe persistirse en `localStorage` (clave `'kanban-theme'`) para evitar parpadeos (FOUC) al refrescar la página.
+
+---
+
+# 35. Entregables y Documentación Final
+
+1. **Documentación Frontend (`client/README.md`)**:
+   - Arquitectura del frontend, componentes, hooks y capas.
+   - Explicación de decisiones de diseño (estilo Modern SaaS, paleta de colores, tokens CSS).
+   - Guía de inicio rápido, variables de entorno y scripts (`npm run dev`, `npm run build`).
+   - Estrategia de sincronización optimista y manejo de errores.
+2. **Documentación Backend (`README.md`)**:
+   - Actualización con detalles de la integración con el frontend y soporte CORS.
+3. **Aplicación Ejecutable**:
+   - Backend y Frontend funcionando de manera coordinada tanto en desarrollo local como en modo build.

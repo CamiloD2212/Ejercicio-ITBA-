@@ -1,6 +1,6 @@
 import express from 'express';
 import columnRoutes from './columnRoutes.js';
-import { createBoard, getBoardById, deleteBoard } from '../controllers/boardController.js';
+import { createBoard, getBoardById, deleteBoard, getBoards } from '../controllers/boardController.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
 import { checkBoardExists } from '../middleware/parentCheck.js';
 
@@ -8,6 +8,9 @@ const router = express.Router();
 
 // Enrutamiento anidado hacia columnas: /api/boards/:boardId/columns
 router.use('/:boardId/columns', columnRoutes);
+
+// GET /api/boards (listar tableros)
+router.get('/', getBoards);
 
 // POST /api/boards
 router.post('/', createBoard);

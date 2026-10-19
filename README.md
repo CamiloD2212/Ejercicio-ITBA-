@@ -340,7 +340,7 @@ Todas las respuestas de error retornan estrictamente un formato JSON unificado:
 
 ## Ejecución de Pruebas
 
-El proyecto cuenta con una suite completa de **50 pruebas automatizadas** que validan modelos, middlewares, reglas de negocio y endpoints:
+El proyecto cuenta con una suite completa de **57 pruebas automatizadas** que validan modelos, middlewares, reglas de negocio y endpoints:
 
 ```bash
 npm test
@@ -360,3 +360,27 @@ El repositorio incluye una colección lista para importar en [`tests/kanban-thun
 - **2. Columns**
 - **3. Tickets**
 - **4. Negative Boundaries & Edge Cases**
+
+---
+
+## Frontend — Cliente SPA Modern SaaS
+
+El proyecto incluye un cliente web de alta fidelidad desarrollado bajo **SDD** en el directorio [`client/`](./client):
+
+- **Stack**: React 18, Vite, React Router DOM v6, Axios, Lucide React, Vanilla CSS con Tokens.
+- **Estilo Visual**: **Modern SaaS (Vibrante y Accesible)** con soporte completo de Light / Dark Mode, conmutador reactivo y detección de preferencia del sistema operativo (`@media (prefers-color-scheme: dark)`).
+- **Actualización Optimista (Optimistic UI)**: Mover tickets entre columnas actualiza inmediatamente la UI (60 fps) y realiza rollback automático con notificación Toast si la API rechaza la petición.
+- **Validación Visual**: Mapeo directo de errores del servidor (`400 Bad Request`) a alertas en los inputs sin recargar la página.
+- **Límites Negativos**: No utiliza `<Link>` para mutaciones, solo navegación programática (`useNavigate`) tras confirmación de éxito.
+
+### Ejecución del Frontend
+```bash
+# Iniciar frontend en modo desarrollo (http://localhost:5173)
+npm run client
+
+# Compilar frontend para producción
+npm run client:build
+```
+
+Para consultar la documentación completa de arquitectura y componentes del cliente, revisa [`client/README.md`](./client/README.md).
+

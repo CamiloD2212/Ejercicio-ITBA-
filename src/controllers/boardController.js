@@ -20,6 +20,20 @@ export async function createBoard(req, res, next) {
 }
 
 /**
+ * GET /api/boards
+ * Obtiene la lista de todos los tableros.
+ * Respuesta: 200 OK
+ */
+export async function getBoards(req, res, next) {
+  try {
+    const boards = await Board.find().sort({ createdAt: -1 });
+    res.status(200).json(boards);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * GET /api/boards/:boardId
  * Obtiene un tablero por ID con sus columnas y tickets poblados.
  * Respuesta: 200 OK

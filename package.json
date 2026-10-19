@@ -8,7 +8,10 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "client": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "client:install": "npm --prefix client install"
   },
   "engines": {
     "node": ">=20.0.0"

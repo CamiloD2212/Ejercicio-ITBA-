@@ -1,0 +1,99 @@
+/* Modern SaaS Design System - Global Tokens */
+:root {
+  /* Light Mode Palette (Default) */
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F4F5F7;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-input: #FFFFFF;
+  
+  --text-primary: #2D3748;
+  --text-secondary: #718096;
+  --text-muted: #A0AEC0;
+  --text-inverse: #FFFFFF;
+
+  /* Modern SaaS Vibrant Accents */
+  --accent-cyan: #00B8D9;
+  --accent-cyan-hover: #00A3BF;
+  --accent-cyan-subtle: rgba(0, 184, 217, 0.12);
+  --accent-purple: #6554C0;
+  --accent-purple-hover: #5444AC;
+  --accent-purple-subtle: rgba(101, 84, 192, 0.12);
+
+  --accent-primary: var(--accent-cyan);
+  --accent-primary-hover: var(--accent-cyan-hover);
+  --accent-secondary: var(--accent-purple);
+  --accent-secondary-hover: var(--accent-purple-hover);
+
+  /* Status Colors */
+  --status-success: #36B37E;
+  --status-success-subtle: rgba(54, 179, 126, 0.12);
+  --status-danger: #FF5630;
+  --status-danger-subtle: rgba(255, 86, 48, 0.12);
+  --status-warning: #FFAB00;
+  --status-warning-subtle: rgba(255, 171, 0, 0.12);
+
+  /* Borders & Shadows */
+  --border-subtle: #E2E8F0;
+  --border-focus: var(--accent-cyan);
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --card-shadow-hover: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+  --modal-backdrop: rgba(15, 23, 42, 0.45);
+
+  /* Typography & Layout Spacing */
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* Dark Mode Tokens */
+html.dark {
+  --bg-primary: #121212;
+  --bg-secondary: #181818;
+  --bg-card: #1E1E1E;
+  --bg-card-hover: #262626;
+  --bg-elevated: #242424;
+  --bg-input: #181818;
+
+  --text-primary: #E0E0E0;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-inverse: #121212;
+
+  /* Dark Mode Accents */
+  --accent-cyan: #33E1ED;
+  --accent-cyan-hover: #50E8F2;
+  --accent-cyan-subtle: rgba(51, 225, 237, 0.15);
+  --accent-purple: #9F8DF1;
+  --accent-purple-hover: #B2A3F5;
+  --accent-purple-subtle: rgba(159, 141, 241, 0.15);
+
+  --accent-primary: var(--accent-cyan);
+  --accent-primary-hover: var(--accent-cyan-hover);
+  --accent-secondary: var(--accent-purple);
+  --accent-secondary-hover: var(--accent-purple-hover);
+
+  /* Status Colors */
+  --status-success: #57D9A3;
+  --status-success-subtle: rgba(87, 217, 163, 0.15);
+  --status-danger: #FF7452;
+  --status-danger-subtle: rgba(255, 116, 82, 0.15);
+  --status-warning: #FFC400;
+  --status-warning-subtle: rgba(255, 196, 0, 0.15);
+
+  /* Dark Mode: subtle borders, no heavy shadows */
+  --border-subtle: #333333;
+  --border-focus: var(--accent-cyan);
+  --card-shadow: none;
+  --card-shadow-hover: 0 0 0 1px #444444;
+  --modal-backdrop: rgba(0, 0, 0, 0.75);
+}
