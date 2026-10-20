@@ -21,8 +21,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Montaje de rutas de la API
+// Montaje de rutas de la API (soporta tanto /api/boards como /boards para compatibilidad serverless)
 app.use('/api/boards', boardRoutes);
+app.use('/boards', boardRoutes);
 
 // Manejo de rutas inexistentes (404)
 app.use((req, res) => {
