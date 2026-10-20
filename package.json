@@ -10,8 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "client": "npm --prefix client run dev",
-    "client:build": "npm --prefix client run build",
-    "client:install": "npm --prefix client install"
+    "client:install": "npm --prefix client install",
+    "client:build": "npm --prefix client install && npm --prefix client run build"
   },
   "engines": {
     "node": ">=20.0.0"
