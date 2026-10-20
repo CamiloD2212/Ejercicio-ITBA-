@@ -43,21 +43,14 @@ export function ColumnCard({
 
   return (
     <div
+      className="kanban-column"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       style={{
-        flex: '0 0 320px',
-        maxWidth: '340px',
-        backgroundColor: 'var(--bg-secondary)',
-        borderRadius: 'var(--radius-lg)',
         border: isDragOver
           ? '2px dashed var(--accent-cyan)'
-          : '1px solid var(--border-subtle)',
-        display: 'flex',
-        flexDirection: 'column',
-        maxHeight: 'calc(100vh - 220px)',
-        transition: 'border-color var(--transition-fast), background-color var(--transition-fast)'
+          : '1px solid var(--border-subtle)'
       }}
     >
       {/* Column Header */}

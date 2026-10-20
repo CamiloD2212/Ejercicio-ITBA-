@@ -71,15 +71,7 @@ export function LoginPage() {
         padding: '1.5rem'
       }}
     >
-      <div
-        className="saas-card"
-        style={{
-          width: '100%',
-          maxWidth: '440px',
-          padding: '2.5rem',
-          borderRadius: 'var(--radius-xl)'
-        }}
-      >
+      <div className="saas-card login-card">
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div
             style={{

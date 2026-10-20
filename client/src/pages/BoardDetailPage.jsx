@@ -346,17 +346,8 @@ export function BoardDetailPage() {
   return (
     <div className="container" style={{ maxWidth: '1600px' }}>
       {/* Top Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.75rem'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div className="responsive-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => navigate('/boards')}
@@ -368,8 +359,8 @@ export function BoardDetailPage() {
           </button>
 
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <h1 style={{ fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: '1.625rem', letterSpacing: '-0.02em', wordBreak: 'break-word' }}>
                 {board ? board.title : 'Cargando tablero...'}
               </h1>
               {board && (
@@ -379,12 +370,12 @@ export function BoardDetailPage() {
               )}
             </div>
             <p style={{ fontSize: '0.8125rem', marginTop: '0.2rem' }}>
-              Arrastra las tarjetas o usa los selectores para mover tareas entre columnas con actualización optimista
+              Arrastra las tarjetas o usa los selectores para mover tareas entre columnas
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div className="responsive-header-actions">
           <Button
             variant="secondary"
             icon={RefreshCw}
@@ -475,15 +466,7 @@ export function BoardDetailPage() {
 
       {/* Kanban Board Columns Horizontal Layout */}
       {!loading && !error && board?.columns && board.columns.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '1.25rem',
-            overflowX: 'auto',
-            paddingBottom: '1.5rem',
-            alignItems: 'flex-start'
-          }}
-        >
+        <div className="kanban-board-container">
           {board.columns.map((column) => (
             <ColumnCard
               key={column._id}
@@ -504,7 +487,7 @@ export function BoardDetailPage() {
             onClick={() => setIsColumnModalOpen(true)}
             className="btn btn-secondary"
             style={{
-              flex: '0 0 260px',
+              flex: '0 0 min(260px, 75vw)',
               height: '80px',
               borderStyle: 'dashed',
               backgroundColor: 'transparent',
@@ -512,7 +495,8 @@ export function BoardDetailPage() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              color: 'var(--text-secondary)'
+              color: 'var(--text-secondary)',
+              scrollSnapAlign: 'center'
             }}
           >
             <Plus size={18} />
